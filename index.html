@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#f3f2f2;}
+  body{background:#f3f2f2;font-family:Tahoma,"Segoe UI",sans-serif;}
+  button{font-family:inherit;}
+  input::placeholder{color:#999;}
+  .wf-scroll::-webkit-scrollbar{display:none;}
+  .wf-scroll{-webkit-overflow-scrolling:touch;}
+</style>
+</helmet>
+<div dir="rtl" lang="fa" style="height:100dvh;width:100%;display:flex;flex-direction:column;align-items:center;padding:0;margin:0;box-sizing:border-box;">
+  <div style="width:100%;max-width:393px;height:100dvh;background:#fff;position:relative;overflow:hidden;flex-shrink:0;">
+
+    <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+      <div class="wf-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:0 20px 40px;box-sizing:border-box;">
+        <div style="width:100%;height:200px;background:repeating-linear-gradient(45deg,#ccc 0 2px,#eee 2px 10px);border:1px solid #999;display:flex;align-items:center;justify-content:center;color:#777;font-size:13px;margin-top:0;box-sizing:border-box;">تصویر کاور سالن</div>
+        <h1 style="margin:20px 0 6px;font-size:24px;font-weight:700;color:#111;">استودیو زیبایی لونا</h1>
+        <div style="display:flex;align-items:center;gap:8px;margin:0 0 16px;">
+          <span style="color:#111;font-size:15px;letter-spacing:2px;">★★★★☆</span>
+          <span style="font-size:13px;color:#666;">۴.۶ (۱۲۸ نظر)</span>
+        </div>
+        <p style="margin:0 0 24px;font-size:14px;line-height:1.5;color:#444;">خدمات مو، ناخن و پوست در قلب مرکز شهر. پذیرش حضوری امکان‌پذیر است، رزرو وقت ترجیح دارد.</p>
+        <button onClick="{{ goToServices }}" style="width:100%;padding:16px;border:2px solid #111;background:#111;color:#fff;font-size:16px;font-weight:600;cursor:pointer;">[ رزرو کنید ]</button>
+        <div style="margin-top:36px;border-top:1px solid #ddd;padding-top:20px;">
+          <h2 style="font-size:16px;margin:0 0 12px;color:#111;">خدمات</h2>
+          <sc-for list="{{ servicesView }}" as="sv" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee;">
+              <div>
+                <div style="font-size:14px;color:#111;">{{ sv.name }}</div>
+                <div style="font-size:12px;color:#777;margin-top:2px;">{{ sv.durationLabel }} · {{ sv.priceLabel }}</div>
+              </div>
+              <button onClick="{{ sv.book }}" style="border:2px solid #111;background:#fff;color:#111;padding:8px 12px;font-size:12px;cursor:pointer;white-space:nowrap;border-radius:6px;">[ رزرو ]</button>
+            </div>
+          </sc-for>
+          <button onClick="{{ goToServices }}" style="margin-top:16px;width:100%;padding:14px;border:2px solid #111;background:#fff;color:#111;font-size:14px;cursor:pointer;">[ مشاهده همه خدمات ]</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isServices }}">
+      <div class="wf-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:24px 20px 40px;box-sizing:border-box;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <button onClick="{{ goBack }}" style="width:36px;height:36px;border:2px solid #111;background:#fff;font-size:18px;cursor:pointer;padding:0;">→</button>
+          <button onClick="{{ openCancel }}" style="border:none;background:none;text-decoration:underline;font-size:14px;color:#111;cursor:pointer;">انصراف</button>
+        </div>
+        <h1 style="font-size:20px;margin:0 0 18px;color:#111;">خدمات</h1>
+        <sc-for list="{{ servicesView }}" as="sv" hint-placeholder-count="4">
+          <div style="border:1px solid #ccc;border-radius:10px;padding:16px;margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+              <div>
+                <div style="font-size:15px;font-weight:600;color:#111;">{{ sv.name }}</div>
+                <div style="font-size:13px;color:#777;margin-top:4px;">{{ sv.durationLabel }} · {{ sv.priceLabel }}</div>
+              </div>
+              <button onClick="{{ sv.book }}" style="border:2px solid #111;background:#fff;color:#111;padding:10px 14px;font-size:13px;cursor:pointer;white-space:nowrap;border-radius:6px;">[ رزرو ]</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCart }}">
+      <div class="wf-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:24px 20px 40px;box-sizing:border-box;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <button onClick="{{ goBack }}" style="width:36px;height:36px;border:2px solid #111;background:#fff;font-size:18px;cursor:pointer;padding:0;">→</button>
+          <button onClick="{{ openCancel }}" style="border:none;background:none;text-decoration:underline;font-size:14px;color:#111;cursor:pointer;">انصراف</button>
+        </div>
+        <h1 style="font-size:20px;margin:0 0 18px;color:#111;">انتخاب شما</h1>
+        <sc-if value="{{ hasCartServices }}">
+          <div style="margin-bottom:20px;">
+            <div style="font-size:12px;color:#666;margin-bottom:8px;">خدمات انتخاب‌شده</div>
+            <sc-for list="{{ cartServices }}" as="sv" hint-placeholder-count="1">
+              <div style="border:2px solid #111;border-radius:10px;background:#f2f2f2;padding:14px 16px;margin-bottom:10px;">
+                <div style="font-size:15px;font-weight:600;color:#111;">{{ sv.name }}</div>
+                <div style="font-size:13px;color:#555;margin-top:4px;">{{ sv.durationLabel }} · {{ sv.priceLabel }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <div style="font-size:12px;color:#666;margin-bottom:8px;">سایر خدمات</div>
+        <sc-for list="{{ others }}" as="sv" hint-placeholder-count="3">
+          <div style="display:flex;justify-content:space-between;align-items:center;border:1px solid #ccc;padding:14px;margin-bottom:10px;">
+            <div>
+              <div style="font-size:14px;color:#111;">{{ sv.name }}</div>
+              <div style="font-size:12px;color:#777;margin-top:2px;">{{ sv.durationLabel }} · {{ sv.priceLabel }}</div>
+            </div>
+            <button onClick="{{ sv.add }}" style="width:32px;height:32px;border:2px solid #111;background:#fff;font-size:16px;cursor:pointer;padding:0;">+</button>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600;padding-top:14px;border-top:1px solid #999;margin:20px 0 4px;color:#111;">
+          <span>جمع کل</span><span>{{ cartTotalLabel }}</span>
+        </div>
+        <div style="font-size:12px;color:#777;margin:0 0 20px;">{{ cartCountLabel }} مورد انتخاب شده</div>
+        <button onClick="{{ goToDate }}" style="width:100%;padding:16px;border:2px solid #111;background:#111;color:#fff;font-size:16px;font-weight:600;cursor:pointer;">[ ادامه ]</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDate }}">
+      <div class="wf-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:24px 20px 40px;box-sizing:border-box;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <button onClick="{{ goBack }}" style="width:36px;height:36px;border:2px solid #111;background:#fff;font-size:18px;cursor:pointer;padding:0;">→</button>
+          <button onClick="{{ openCancel }}" style="border:none;background:none;text-decoration:underline;font-size:14px;color:#111;cursor:pointer;">انصراف</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h1 style="font-size:20px;margin:0;color:#111;">انتخاب تاریخ</h1>
+          <button onClick="{{ toggleCalendar }}" style="width:36px;height:36px;border:2px solid #111;background:#fff;position:relative;cursor:pointer;padding:0;">
+            <div style="position:absolute;top:0;left:0;right:0;height:9px;background:#111;"></div>
+          </button>
+        </div>
+        <sc-if value="{{ hasCartServices }}">
+          <div style="border:1px solid #999;border-radius:10px;background:#f2f2f2;padding:14px 16px;margin-bottom:16px;">
+            <div style="font-size:11px;letter-spacing:0.05em;color:#666;margin-bottom:6px;">انتخاب‌شده</div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+              <div>
+                <sc-for list="{{ cartServices }}" as="sv" hint-placeholder-count="1">
+                  <div style="font-size:14px;color:#111;">{{ sv.name }}</div>
+                </sc-for>
+                <sc-if value="{{ selectedTime }}">
+                  <div style="font-size:12px;color:#666;margin-top:6px;">{{ selectedTime }}</div>
+                </sc-if>
+              </div>
+              <div style="font-size:15px;font-weight:600;color:#111;white-space:nowrap;">{{ cartTotalLabel }}</div>
+            </div>
+          </div>
+        </sc-if>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;">
+          <button onClick="{{ scrollDaysBack }}" style="flex-shrink:0;width:30px;height:30px;border:1px solid #111;background:#fff;border-radius:50%;font-size:13px;cursor:pointer;padding:0;">→</button>
+          <div ref="{{ daysScrollRef }}" class="wf-scroll" onWheel="{{ handleDayWheel }}" style="display:flex;overflow-x:auto;gap:8px;padding:0 4px;scrollbar-width:none;touch-action:pan-x;">
+            <sc-for list="{{ upcoming }}" as="day" hint-placeholder-count="5">
+              <button onClick="{{ day.select }}" style="{{ day.style }}">
+                <span style="font-size:9px;white-space:nowrap;">{{ day.weekdayShort }}</span>
+                <span style="font-size:18px;font-weight:700;">{{ day.dayNum }}</span>
+                <span style="font-size:10px;opacity:0.75;">{{ day.monthShort }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <button onClick="{{ scrollDaysForward }}" style="flex-shrink:0;width:30px;height:30px;border:1px solid #111;background:#fff;border-radius:50%;font-size:13px;cursor:pointer;padding:0;">←</button>
+        </div>
+        <sc-if value="{{ selectedDayObj }}">
+          <sc-if value="{{ selectedDayObj.booked }}">
+            <div style="border:1px solid #999;background:#f3f3f3;padding:16px;margin-top:8px;font-size:13px;color:#555;">برای این روز زمانی در دسترس نیست. لطفاً روز دیگری را انتخاب کنید.</div>
+          </sc-if>
+          <sc-if value="{{ selectedDayObj.availableSlots }}">
+            <div style="margin-top:12px;">
+              <div style="font-size:12px;color:#666;margin-bottom:10px;">زمان‌های در دسترس</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                <sc-for list="{{ timeSlots }}" as="t" hint-placeholder-count="6">
+                  <button onClick="{{ t.select }}" style="{{ t.style }}">{{ t.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+        <button onClick="{{ attemptContinueDate }}" style="{{ dateContinueBtnStyle }}">[ ادامه ]</button>
+        <sc-if value="{{ dateError }}">
+          <p style="color:#c0392b;font-size:13px;margin-top:10px;">لطفاً تاریخ و زمان را برای ادامه انتخاب کنید.</p>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ showCalendar }}">
+        <div class="wf-scroll" style="position:absolute;inset:0;background:#fff;z-index:5;padding:20px;box-sizing:border-box;overflow-y:auto;scrollbar-width:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 style="font-size:16px;margin:0;color:#111;">{{ calendarHeaderLabel }}</h2>
+            <button onClick="{{ toggleCalendar }}" style="width:32px;height:32px;border:2px solid #111;background:#fff;font-size:16px;cursor:pointer;padding:0;">×</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px;">
+            <sc-for list="{{ weekdayLabels }}" as="wd" hint-placeholder-count="7">
+              <div style="text-align:center;font-size:11px;color:#777;">{{ wd }}</div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;">
+            <sc-for list="{{ monthGrid }}" as="cell" hint-placeholder-count="31">
+              <sc-if value="{{ cell.filled }}">
+                <button onClick="{{ cell.select }}" style="{{ cell.style }}">{{ cell.dayLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ cell.blank }}"><div></div></sc-if>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isSummary }}">
+      <div class="wf-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:24px 20px 40px;box-sizing:border-box;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <button onClick="{{ goBack }}" style="width:36px;height:36px;border:2px solid #111;background:#fff;font-size:18px;cursor:pointer;padding:0;">→</button>
+          <button onClick="{{ openCancel }}" style="border:none;background:none;text-decoration:underline;font-size:14px;color:#111;cursor:pointer;">انصراف</button>
+        </div>
+        <h1 style="font-size:20px;margin:0 0 18px;color:#111;">خلاصه رزرو</h1>
+        <sc-for list="{{ cartServices }}" as="sv" hint-placeholder-count="1">
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:12px 0;">
+            <div>
+              <div style="font-size:14px;color:#111;">{{ sv.name }}</div>
+              <div style="font-size:12px;color:#777;margin-top:2px;">{{ sv.durationLabel }}</div>
+            </div>
+            <div style="font-size:14px;color:#111;">{{ sv.priceLabel }}</div>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600;padding:14px 0;border-bottom:1px solid #999;color:#111;">
+          <span>جمع کل</span><span>{{ cartTotalLabel }}</span>
+        </div>
+        <div style="margin-top:20px;font-size:14px;color:#111;">
+          <div style="margin-bottom:6px;"><span style="color:#777;">تاریخ:</span> {{ selectedDayObj.label }}</div>
+          <div><span style="color:#777;">زمان:</span> {{ timeRangeLabel }}</div>
+        </div>
+        <button onClick="{{ goToContact }}" style="width:100%;padding:16px;border:2px solid #111;background:#111;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:28px;">[ ادامه ]</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isContact }}">
+      <div class="wf-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:24px 20px 40px;box-sizing:border-box;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <button onClick="{{ goBack }}" style="width:36px;height:36px;border:2px solid #111;background:#fff;font-size:18px;cursor:pointer;padding:0;">→</button>
+          <button onClick="{{ openCancel }}" style="border:none;background:none;text-decoration:underline;font-size:14px;color:#111;cursor:pointer;">انصراف</button>
+        </div>
+        <h1 style="font-size:20px;margin:0 0 18px;color:#111;">اطلاعات تماس و پرداخت</h1>
+        <div style="margin-bottom:8px;">
+          <label style="font-size:12px;color:#666;">نام</label>
+          <input value="{{ name }}" onChange="{{ updateName }}" placeholder="نام و نام خانوادگی" style="{{ nameInputStyle }}" />
+          <sc-if value="{{ nameError }}"><p style="color:#c0392b;font-size:12px;margin:2px 0 12px;">لطفاً نام خود را وارد کنید.</p></sc-if>
+          <label style="font-size:12px;color:#666;">شماره تلفن</label>
+          <input value="{{ phone }}" onChange="{{ updatePhone }}" placeholder="۰۹۱۲۱۲۳۴۵۶۷" style="{{ phoneInputStyle }}" />
+          <sc-if value="{{ phoneError }}"><p style="color:#c0392b;font-size:12px;margin:2px 0 8px;">لطفاً شماره تلفن معتبر وارد کنید.</p></sc-if>
+        </div>
+        <sc-if value="{{ tooManyFails }}">
+          <div style="border:1px solid #999;background:#f5f5f5;padding:20px;margin-top:16px;">
+            <p style="font-size:14px;color:#111;margin:0 0 12px;">در پرداخت آنلاین مشکل دارید؟ با ما تماس بگیرید یا پیام دهید تا نوبت شما را نگه داریم.</p>
+            <p style="font-size:14px;font-weight:600;margin:0 0 16px;color:#111;">(۵۵۵) ۰۱۰-۲۰۲۴</p>
+            <div style="display:flex;gap:10px;">
+              <button onClick="{{ callSalon }}" style="flex:1;padding:14px;border:2px solid #111;background:#111;color:#fff;font-size:14px;cursor:pointer;">[ تماس ]</button>
+              <button onClick="{{ messageSalon }}" style="flex:1;padding:14px;border:2px solid #111;background:#fff;color:#111;font-size:14px;cursor:pointer;">[ پیام ]</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showPaymentSection }}">
+          <div style="margin-top:16px;">
+            <div style="font-size:12px;color:#666;margin-bottom:10px;">پرداخت</div>
+            <sc-for list="{{ payOptions }}" as="opt" hint-placeholder-count="3">
+              <button onClick="{{ opt.select }}" style="{{ opt.style }}">
+                <span style="{{ opt.dotStyle }}"></span>{{ opt.label }}
+              </button>
+            </sc-for>
+            <sc-if value="{{ paymentFailed }}">
+              <p style="color:#c0392b;font-size:13px;margin:10px 0 0;">پرداخت ناموفق بود، لطفاً دوباره تلاش کنید.</p>
+            </sc-if>
+            <button onClick="{{ attemptConfirmPay }}" style="width:100%;padding:16px;border:2px solid #111;background:#111;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:18px;">[ تأیید و پرداخت ]</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isConfirmation }}">
+      <div onClick="{{ resetToStart }}" class="wf-scroll" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:24px 20px 40px;box-sizing:border-box;cursor:pointer;">
+        <div style="width:64px;height:64px;border:2px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:36px auto 20px;color:#111;">✓</div>
+        <h1 style="text-align:center;font-size:20px;margin:0 0 8px;color:#111;">رزرو تأیید شد</h1>
+        <sc-if value="{{ name }}">
+          <p style="text-align:center;font-size:14px;color:#555;margin:0 0 20px;">{{ name }} عزیز، منتظر دیدارتان هستیم!</p>
+        </sc-if>
+        <sc-for list="{{ cartServices }}" as="sv" hint-placeholder-count="1">
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:10px 0;">
+            <div style="font-size:14px;color:#111;">{{ sv.name }}</div>
+            <div style="font-size:14px;color:#111;">{{ sv.priceLabel }}</div>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600;padding:12px 0;border-bottom:1px solid #999;color:#111;">
+          <span>جمع کل</span><span>{{ cartTotalLabel }}</span>
+        </div>
+        <div style="margin-top:16px;font-size:14px;color:#111;">
+          <div style="margin-bottom:6px;"><span style="color:#777;">تاریخ:</span> {{ selectedDayObj.label }}</div>
+          <div><span style="color:#777;">زمان:</span> {{ selectedTime }}</div>
+        </div>
+        <p style="text-align:center;color:#444;font-size:13px;margin-top:28px;line-height:1.5;">خیلی خوشحالیم که میزبان شما خواهیم بود! پیامک یادآوری کمی قبل از وقتتان برایتان ارسال می‌شود. تا آن موقع!</p>
+        <p style="text-align:center;color:#999;font-size:12px;margin-top:24px;line-height:1.5;">برای پایان و بازگشت به صفحه اصلی، هر جای صفحه را لمس یا کلیک کنید.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCancelModal }}">
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:10;">
+        <div style="width:280px;background:#fff;border:2px solid #111;border-radius:14px;padding:24px;box-sizing:border-box;">
+          <p style="font-size:15px;color:#111;margin:0 0 20px;text-align:center;">آیا مطمئن هستید که می‌خواهید این رزرو را لغو کنید؟</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button onClick="{{ confirmCancel }}" style="padding:14px;border:2px solid #111;background:#111;color:#fff;font-size:14px;cursor:pointer;">[ بله، لغو کن ]</button>
+            <button onClick="{{ closeCancel }}" style="padding:14px;border:2px solid #111;background:#fff;color:#111;font-size:14px;cursor:pointer;">[ نه، بازگشت ]</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FA_DIGITS = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+function faNum(n) { return String(n).replace(/[0-9]/g, d => FA_DIGITS[+d]); }
+function faToLatinDigits(str) { return String(str).replace(/[۰-۹]/g, d => String(FA_DIGITS.indexOf(d))); }
+
+const WEEKDAYS_FA = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+const WEEKDAYS_FA_SHORT = ['ی','د','س','چ','پ','ج','ش'];
+const WEEKDAYS_FA_SHORT3 = ['یک','دو','سه','چهار','پنج','جمعه','شنبه'];
+const JALALI_MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function gregorianToJalali(gy, gm, gd) {
+  const g_d_m = [0,31,59,90,120,151,181,212,243,273,304,334];
+  const gy2 = (gm > 2) ? (gy + 1) : gy;
+  let days = 355666 + (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+  let jy = -1595 + (33 * Math.floor(days / 12053));
+  days %= 12053;
+  jy += 4 * Math.floor(days / 1461);
+  days %= 1461;
+  if (days > 365) { jy += Math.floor((days - 1) / 365); days = (days - 1) % 365; }
+  let jm, jd;
+  if (days < 186) { jm = 1 + Math.floor(days / 31); jd = 1 + (days % 31); }
+  else { jm = 7 + Math.floor((days - 186) / 30); jd = 1 + ((days - 186) % 30); }
+  return [jy, jm, jd];
+}
+
+class Component extends DCLogic {
+  state = {
+    screen: 'landing',
+    history: [],
+    cart: [],
+    selectedDayKey: null,
+    selectedTime: null,
+    showCalendar: false,
+    showCancelModal: false,
+    name: '',
+    phone: '',
+    payMethod: 'deposit',
+    attempts: 0,
+    paymentFailed: false,
+    tooManyFails: false,
+    dateError: false,
+    nameError: false,
+    phoneError: false,
+  };
+
+  services = [
+    { id: 's1', name: 'کوتاهی و حالت مو', durationMin: 45, price: 45 },
+    { id: 's2', name: 'رنگ بالیاژ', durationMin: 120, price: 180 },
+    { id: 's3', name: 'سشوار', durationMin: 30, price: 35 },
+    { id: 's4', name: 'مانیکور ژل', durationMin: 40, price: 28 },
+    { id: 's5', name: 'پدیکور', durationMin: 50, price: 32 },
+    { id: 's6', name: 'ترمیم عمیق مو', durationMin: 30, price: 25 },
+  ].map(sv => ({ ...sv, durationLabel: faNum(sv.durationMin) + ' دقیقه', priceLabel: faNum(sv.price) + ' تومان' }));
+
+  timeSlotsBase = ['9:00 ص','10:30 ص','12:00 ظ','1:30 ب.ظ','3:00 ب.ظ','4:30 ب.ظ','6:00 ع'];
+  today = new Date(2026, 7, 13);
+  daysScrollRef = React.createRef();
+
+  navigate(next) {
+    this.setState(s => {
+      const patch = { history: [...s.history, s.screen], screen: next };
+      if (next === 'contact') { patch.name = ''; patch.phone = ''; patch.nameError = false; patch.phoneError = false; }
+      return patch;
+    });
+  }
+  goBack() {
+    this.setState(s => {
+      const h = [...s.history];
+      const prev = h.pop() || 'landing';
+      const patch = { history: h, screen: prev };
+      if (prev === 'contact') { patch.name = ''; patch.phone = ''; patch.nameError = false; patch.phoneError = false; }
+      return patch;
+    });
+  }
+  openCancel() { this.setState({ showCancelModal: true }); }
+  closeCancel() { this.setState({ showCancelModal: false }); }
+  confirmCancel() {
+    this.setState({
+      screen: 'landing', history: [], cart: [], selectedDayKey: null, selectedTime: null,
+      showCalendar: false, showCancelModal: false, name: '', phone: '', payMethod: 'deposit',
+      attempts: 0, paymentFailed: false, tooManyFails: false,
+    });
+  }
+  bookService(id) {
+    this.setState({ cart: [id] });
+    this.navigate('cart');
+  }
+  addToCart(id) {
+    this.setState(s => (s.cart.includes(id) ? null : { cart: [...s.cart, id] }));
+  }
+  toggleCalendar() { this.setState(s => ({ showCalendar: !s.showCalendar })); }
+  selectDay(key) { this.setState({ selectedDayKey: key, selectedTime: null, showCalendar: false, dateError: false }); }
+  selectTime(t) { this.setState({ selectedTime: t, dateError: false }); }
+  attemptContinueDate() {
+    if (this.state.selectedTime) this.navigate('summary');
+    else this.setState({ dateError: true });
+  }
+  setPayMethod(m) { this.setState({ payMethod: m, paymentFailed: false }); }
+  attemptConfirmPay() {
+    const nameValid = this.state.name.trim().length >= 2;
+    const phoneValid = /^[0-9۰-۹+\-\s()]{7,}$/.test(this.state.phone.trim());
+    if (!nameValid || !phoneValid) { this.setState({ nameError: !nameValid, phoneError: !phoneValid }); return; }
+    this.setState({ nameError: false, phoneError: false });
+    this.confirmPay();
+  }
+  resetToStart() { this.confirmCancel(); }
+  handleDayWheel(e) {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      e.currentTarget.scrollLeft -= e.deltaY;
+      e.preventDefault();
+    }
+  }
+  scrollDaysBack() { const el = this.daysScrollRef.current; if (el) el.scrollBy({ left: 140, behavior: 'smooth' }); }
+  scrollDaysForward() { const el = this.daysScrollRef.current; if (el) el.scrollBy({ left: -140, behavior: 'smooth' }); }
+  parseTimeToMinutes(str) {
+    const latin = faToLatinDigits(str || '');
+    const m = /(\d+):(\d+)\s*(.+)/.exec(latin);
+    if (!m) return null;
+    let h = parseInt(m[1], 10);
+    const mm = parseInt(m[2], 10);
+    const period = m[3].trim();
+    if (period === 'ص') { if (h === 12) h = 0; }
+    else if (h !== 12) h += 12;
+    return h * 60 + mm;
+  }
+  formatMinutesToTime(mins) {
+    mins = ((mins % 1440) + 1440) % 1440;
+    let h = Math.floor(mins / 60), m = mins % 60;
+    let period;
+    if (h < 12) period = 'ص';
+    else if (h === 12) period = 'ظ';
+    else if (h < 18) period = 'ب.ظ';
+    else period = 'ع';
+    let h12 = h % 12; if (h12 === 0) h12 = 12;
+    return faNum(h12) + ':' + faNum(String(m).padStart(2, '0')) + ' ' + period;
+  }
+  confirmPay() {
+    if (this.state.payMethod === 'cash') { this.navigate('confirmation'); return; }
+    const attempts = this.state.attempts + 1;
+    if (attempts >= 3) this.setState({ attempts, tooManyFails: true, paymentFailed: false });
+    else this.setState({ attempts, paymentFailed: true });
+  }
+  callSalon() {}
+  messageSalon() {}
+
+  buildUpcoming() {
+    const days = [];
+    for (let i = 0; i < 14; i++) {
+      const d = new Date(this.today);
+      d.setDate(this.today.getDate() + i);
+      const key = d.toISOString().slice(0, 10);
+      const booked = d.getDate() % 4 === 0;
+      const [, jm, jd] = gregorianToJalali(d.getFullYear(), d.getMonth() + 1, d.getDate());
+      days.push({
+        key, booked,
+        label: WEEKDAYS_FA[d.getDay()] + '، ' + faNum(jd) + ' ' + JALALI_MONTHS[jm - 1],
+        weekdayShort: WEEKDAYS_FA[d.getDay()],
+        dayNum: faNum(jd),
+        monthShort: JALALI_MONTHS[jm - 1],
+      });
+    }
+    return days;
+  }
+
+  buildMonthGrid() {
+    const year = 2026, month = 7;
+    const startOffset = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < startOffset; i++) cells.push({ blank: true });
+    for (let day = 1; day <= daysInMonth; day++) {
+      const d = new Date(year, month, day);
+      const key = d.toISOString().slice(0, 10);
+      const [, , jd] = gregorianToJalali(year, month + 1, day);
+      cells.push({ filled: true, key, day, dayLabel: faNum(jd), isPast: day < 13, booked: day % 4 === 0 });
+    }
+    return cells;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const cartServices = s.cart.map(id => this.services.find(x => x.id === id)).filter(Boolean);
+    const primary = cartServices[0] || null;
+    const extras = cartServices.slice(1);
+    const others = this.services.filter(sv => !s.cart.includes(sv.id));
+    const cartTotal = cartServices.reduce((sum, x) => sum + x.price, 0);
+
+    const servicesView = this.services.map(sv => ({ ...sv, book: () => this.bookService(sv.id) }));
+    const othersView = others.map(sv => ({ ...sv, add: () => this.addToCart(sv.id) }));
+
+    const upcoming = this.buildUpcoming().map(d => {
+      const selected = d.key === s.selectedDayKey;
+      return {
+        ...d,
+        select: () => this.selectDay(d.key),
+        style: {
+          flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px',
+          width: '68px', padding: '10px 4px', borderRadius: '14px',
+          border: selected ? '2px solid #111' : '1px solid #ccc',
+          background: d.booked ? '#eee' : (selected ? '#111' : '#fff'),
+          color: d.booked ? '#999' : (selected ? '#fff' : '#111'),
+          opacity: d.booked ? 0.6 : 1,
+          cursor: d.booked ? 'not-allowed' : 'pointer',
+        },
+      };
+    });
+    const selectedDayObjRaw = upcoming.find(d => d.key === s.selectedDayKey) || null;
+    const selectedDayObj = selectedDayObjRaw ? { ...selectedDayObjRaw, availableSlots: !selectedDayObjRaw.booked } : null;
+
+    const [midJy, midJm] = gregorianToJalali(2026, 8, 15);
+    const calendarHeaderLabel = JALALI_MONTHS[midJm - 1] + ' ' + faNum(midJy);
+    const monthGrid = this.buildMonthGrid().map(c => {
+      if (c.blank) return c;
+      const disabled = c.isPast || c.booked;
+      const selected = c.key === s.selectedDayKey;
+      return {
+        ...c,
+        select: () => { if (!c.isPast) this.selectDay(c.key); },
+        style: {
+          width: '100%', padding: '8px 0', fontSize: '13px', borderRadius: '8px',
+          border: selected ? '2px solid #111' : '1px solid #ddd',
+          background: disabled ? '#eee' : '#fff',
+          color: disabled ? '#aaa' : '#111',
+          opacity: c.isPast ? 0.4 : (c.booked ? 0.6 : 1),
+          cursor: disabled ? 'not-allowed' : 'pointer',
+        },
+      };
+    });
+
+    const timeSlots = this.timeSlotsBase.map(t => {
+      const selected = s.selectedTime === t;
+      return {
+        label: t,
+        select: () => this.selectTime(t),
+        style: {
+          padding: '12px 4px', fontSize: '13px', textAlign: 'center', cursor: 'pointer', borderRadius: '8px',
+          border: selected ? '2px solid #111' : '1px solid #ccc',
+          background: selected ? '#111' : '#fff',
+          color: selected ? '#fff' : '#111',
+        },
+      };
+    });
+
+    const dateContinueDisabled = !s.selectedTime;
+    const dateContinueBtnStyle = {
+      width: '100%', padding: '16px', fontSize: '16px', fontWeight: 600, marginTop: '20px',
+      border: '2px solid #111',
+      background: dateContinueDisabled ? '#fff' : '#111',
+      color: dateContinueDisabled ? '#999' : '#fff',
+      cursor: 'pointer',
+      opacity: dateContinueDisabled ? 0.6 : 1,
+    };
+    const hasCartServices = cartServices.length > 0;
+    const cartCount = cartServices.length;
+    let timeRangeLabel = s.selectedTime || '';
+    if (s.selectedTime) {
+      const startMin = this.parseTimeToMinutes(s.selectedTime);
+      if (startMin != null) {
+        const totalMin = cartServices.reduce((sum, sv) => sum + sv.durationMin, 0);
+        timeRangeLabel = 'از ' + this.formatMinutesToTime(startMin) + ' تا ' + this.formatMinutesToTime(startMin + totalMin) + ' تقریباً';
+      }
+    }
+    const nameValid = s.name.trim().length >= 2;
+    const phoneValid = /^[0-9۰-۹+\-\s()]{7,}$/.test(s.phone.trim());
+    const nameInputStyle = { display: 'block', width: '100%', border: (s.nameError && !nameValid) ? '2px solid #c0392b' : '1px solid #999', padding: '12px', marginTop: '4px', marginBottom: '4px', fontSize: '14px', boxSizing: 'border-box' };
+    const phoneInputStyle = { display: 'block', width: '100%', border: (s.phoneError && !phoneValid) ? '2px solid #c0392b' : '1px solid #999', padding: '12px', marginTop: '4px', marginBottom: '4px', fontSize: '14px', boxSizing: 'border-box' };
+
+    const payOptionsDef = [
+      { key: 'deposit', label: 'پرداخت پیش‌پرداخت' },
+      { key: 'full', label: 'پرداخت کامل' },
+      { key: 'cash', label: 'پرداخت در سالن (نقدی)' },
+    ];
+    const payOptions = payOptionsDef.map(o => {
+      const selected = s.payMethod === o.key;
+      return {
+        ...o,
+        select: () => this.setPayMethod(o.key),
+        style: {
+          display: 'flex', alignItems: 'center', width: '100%', textAlign: 'right', padding: '14px',
+          marginBottom: '10px', fontSize: '14px', cursor: 'pointer', background: '#fff', color: '#111',
+          border: selected ? '2px solid #111' : '1px solid #ccc',
+        },
+        dotStyle: {
+          display: 'inline-block', width: '14px', height: '14px', borderRadius: '50%', marginLeft: '10px',
+          border: '2px solid #111', background: selected ? '#111' : '#fff', flexShrink: 0,
+        },
+      };
+    });
+
+    return {
+      isLanding: s.screen === 'landing',
+      isServices: s.screen === 'services',
+      isCart: s.screen === 'cart',
+      isDate: s.screen === 'date',
+      isSummary: s.screen === 'summary',
+      isContact: s.screen === 'contact',
+      isConfirmation: s.screen === 'confirmation',
+      showCancelModal: s.showCancelModal,
+      goBack: () => this.goBack(),
+      openCancel: () => this.openCancel(),
+      closeCancel: () => this.closeCancel(),
+      confirmCancel: () => this.confirmCancel(),
+      goToServices: () => this.navigate('services'),
+      servicesView,
+      others: othersView,
+      cartTotal, cartTotalLabel: faNum(cartTotal) + ' تومان', cartServices, cartCount, cartCountLabel: faNum(cartCount),
+      goToDate: () => this.navigate('date'),
+      goToContact: () => this.navigate('contact'),
+      upcoming, selectedDayObj,
+      handleDayWheel: e => this.handleDayWheel(e),
+      daysScrollRef: this.daysScrollRef,
+      scrollDaysBack: () => this.scrollDaysBack(),
+      scrollDaysForward: () => this.scrollDaysForward(),
+      showCalendar: s.showCalendar,
+      toggleCalendar: () => this.toggleCalendar(),
+      weekdayLabels: WEEKDAYS_FA_SHORT,
+      monthGrid,
+      calendarHeaderLabel,
+      timeSlots,
+      dateContinueDisabled, dateContinueBtnStyle,
+      hasCartServices,
+      timeRangeLabel,
+      dateError: s.dateError,
+      attemptContinueDate: () => this.attemptContinueDate(),
+      selectedTime: s.selectedTime,
+      name: s.name, phone: s.phone,
+      updateName: e => this.setState({ name: e.target.value }),
+      updatePhone: e => this.setState({ phone: e.target.value }),
+      nameInputStyle, phoneInputStyle,
+      nameError: s.nameError && !nameValid,
+      phoneError: s.phoneError && !phoneValid,
+      showPaymentSection: !s.tooManyFails,
+      payOptions,
+      paymentFailed: s.paymentFailed,
+      tooManyFails: s.tooManyFails,
+      confirmPay: () => this.confirmPay(),
+      attemptConfirmPay: () => this.attemptConfirmPay(),
+      callSalon: () => this.callSalon(),
+      messageSalon: () => this.messageSalon(),
+      resetToStart: () => this.resetToStart(),
+    };
+  }
+}
+</script>
+</body>
+</html>
