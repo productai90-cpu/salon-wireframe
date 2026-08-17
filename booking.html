@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رزرو | استودیو لونا</title>
+<style>
+:root{
+--bg:#f7faff;--surface:#ffffff;--surface2:#eef5ff;--text:#111827;--muted:#667085;--line:#dbe5f0;
+--accent:#1769d2;--accent2:#4d91e8;--accentSoft:#e8f2ff;
+--success:#eaf4ff;--successText:#1769d2;--danger:#fff1f1;--dangerText:#b42318;
+--shadow:0 14px 40px rgba(17,24,39,.07)
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#eaf3ff 0,#f7f9fc 260px,#f5f7fa 100%);color:var(--text);font-family:Tahoma,Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:520px;margin:auto;min-height:100vh}
+header{padding:20px 20px 12px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:18px;font-weight:900;letter-spacing:-.3px}.mini{font-size:11px;color:var(--accent);background:var(--accentSoft);padding:7px 10px;border-radius:99px;font-weight:700}
+main{padding:0 16px 108px}
+.hero{padding:22px 5px 20px}.eyebrow{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:9px}
+.hero h1{font-size:28px;line-height:1.42;letter-spacing:-.6px;margin:0 0 8px}.hero p{display:none}
+.card{background:rgba(255,255,255,.96);border:1px solid rgba(230,221,212,.9);border-radius:26px;padding:18px;margin:18px 0;box-shadow:var(--shadow)}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.head h2{font-size:16px;margin:0}.head span{font-size:11px;color:var(--muted)}
+.services{display:grid;gap:10px}
+.service{width:100%;border:1px solid var(--line);border-radius:19px;padding:15px;background:#fff;display:flex;align-items:center;justify-content:space-between;text-align:right;transition:.15s;box-shadow:0 4px 15px rgba(17,24,39,.035)}
+.service:active{transform:scale(.985);background:var(--surface2)}
+.service strong{display:block;font-size:14px;margin-bottom:6px}.service small{color:var(--muted);font-size:11px}
+.price{text-align:left;font-weight:900;font-size:13px;color:var(--accent)}.price small{display:block;font-weight:700;color:var(--muted);margin-top:5px}
+.service .arrow{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accentSoft);color:var(--accent);margin-right:10px}
+.btn{width:100%;border:0;border-radius:17px;padding:15px 18px;font-weight:800}.primary{background:linear-gradient(135deg,#1769d2,#1258b5);color:#fff;box-shadow:0 10px 24px rgba(23,105,210,.20)}.secondary{background:var(--surface2);color:var(--text)}
+.hidden{display:none!important}.back{border:0;background:transparent;color:var(--muted);padding:4px 0;margin:7px 0 17px;font-size:13px}
+.progress{display:flex;gap:5px;margin-bottom:19px}.progress i{height:4px;flex:1;border-radius:8px;background:var(--line)}.progress i.on{background:var(--accent)}
+.step-title{font-size:23px;margin:0 0 7px}.step-sub{color:var(--muted);font-size:12px;margin:0 0 24px}.step-sub + .grid{margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.slot{border:1px solid var(--line);background:#fff;border-radius:18px;padding:16px 12px;text-align:center;transition:.15s;box-shadow:0 4px 14px rgba(17,24,39,.035)}
+.slot strong{display:block;font-size:14px}.slot small{display:block;color:var(--muted);margin-top:6px;font-size:11px}
+.slot.selected{background:linear-gradient(135deg,#1769d2,#1258b5);border-color:transparent;color:#fff;box-shadow:0 9px 22px rgba(155,95,79,.2)}
+.slot.selected small{color:#f7e8e3}
+label{font-size:11px;color:var(--muted);display:block;margin:14px 0 7px}input{width:100%;border:1px solid var(--line);background:#fff;border-radius:15px;padding:14px;outline:none;transition:.15s}
+input:focus{border-color:var(--accent2);box-shadow:0 0 0 4px rgba(23,105,210,.12)}input.invalid{border-color:#1769d2;background:#f8fbff}
+.error{background:var(--danger);color:var(--dangerText);border:1px solid #c9dcf4;border-radius:13px;padding:11px 12px;font-size:12px;line-height:1.7;margin-top:12px}
+.note{font-size:11px;color:var(--muted);line-height:1.8;margin-top:10px}
+.sticky{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);padding:12px 16px 16px;background:rgba(247,250,255,.92);backdrop-filter:blur(14px);border-top:1px solid rgba(230,221,212,.8)}
+.confirm{background:var(--success);border:1px solid #cfe5d4;border-radius:26px;padding:28px 20px;text-align:center;box-shadow:var(--shadow)}
+.check{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#fff;margin:0 auto 15px;color:var(--successText);font-size:27px;font-weight:900}
+.confirm h1{font-size:23px;margin:0 0 10px}.confirm p{font-size:12px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand" id="businessName"></div><div class="mini">رزرو آنلاین</div></header>
+<main>
+<section id="home">
+<div class="hero"><div class="eyebrow" id="businessTagline"></div><h1>خدمتت رو انتخاب کن، زمان مناسب رو بردار.</h1><p></p></div>
+<div class="card"><div class="head"><h2>خدمات</h2><span id="priceLabel"></span></div><div id="services" class="services"></div></div>
+<div class="card"><div class="head"><h2>سؤال داری؟</h2></div><button class="btn secondary" onclick="whatsapp()">مشاوره در واتساپ</button></div>
+</section>
+
+<section id="booking" class="hidden">
+<button class="back" onclick="show('home')">→ بازگشت</button>
+<div class="progress"><i class="on"></i><i id="p2"></i><i id="p3"></i></div>
+<h1 id="selectedServiceTitle" class="step-title"></h1><p class="step-sub">روز و ساعت مناسب را انتخاب کن.</p>
+<div id="dates" class="grid"></div><div style="height:34px"></div><div class="head" style="margin:0 2px 14px"><h2>ساعت</h2><span>زمان آزاد</span></div><div id="times" class="grid"></div>
+<div id="details" class="card hidden"><h2 style="margin-top:0;font-size:17px">اطلاعات تماس</h2>
+<label for="name">نام و نام خانوادگی</label><input id="name" placeholder="مثلاً مریم رضایی">
+<label for="phone">شماره موبایل</label><input id="phone" inputmode="tel" placeholder="09xxxxxxxxx">
+<div id="formError" class="error hidden"></div>
+</div>
+</section>
+
+<section id="done" class="hidden"><div style="padding-top:60px"></div><div class="confirm"><div class="check">✓</div>
+<h1 style="font-size:23px">درخواست رزرو ارسال شد</h1>
+<p style="color:var(--dangerText);font-weight:800;line-height:1.9">این پیام به معنی رزرو نهایی نیست.</p>
+<p style="color:var(--muted);line-height:1.9">درخواست شما توسط صاحب سالن بررسی می‌شود. در صورت خالی بودن زمان و تأیید سالن، نتیجه رزرو از طریق پیام به شما اعلام خواهد شد.</p>
+<button class="btn secondary" onclick="whatsapp()">ارتباط با سالن در واتساپ</button></div></section>
+</main>
+<div id="sticky" class="sticky hidden"><button class="btn primary" onclick="submitBooking()">ارسال درخواست رزرو</button></div>
+</div>
+
+<script>
+const DATA={
+business:{name:"استودیو لونا",tagline:"رزرو ساده برای مشتریان ما",whatsapp:"989121234567",currency:"قیمت‌ها به تومان"},
+services:[
+{id:1,name:"کوتاهی و حالت مو",duration:"۴۵ دقیقه",price:"۴۵۰٬۰۰۰"},
+{id:2,name:"رنگ و براشینگ",duration:"۹۰ دقیقه",price:"۹۵۰٬۰۰۰"},
+{id:3,name:"مانیکور",duration:"۴۵ دقیقه",price:"۳۵۰٬۰۰۰"},
+{id:4,name:"میکاپ",duration:"۶۰ دقیقه",price:"۸۵۰٬۰۰۰"}],
+days:[
+{name:"شنبه",times:["10:00","12:00","16:00"]},
+{name:"یکشنبه",times:["11:00","14:30","18:00"]},
+{name:"دوشنبه",times:["10:30","13:00","17:30"]},
+{name:"سه‌شنبه",times:["09:30","12:30","16:30"]},
+{name:"چهارشنبه",times:["11:00","15:00","18:30"]},
+{name:"پنجشنبه",times:["10:00","13:30","17:00"]},
+{name:"جمعه",times:["10:30","14:00","18:00"]}]
+};
+let selected={service:null,day:null,time:null};
+
+function init(){
+document.getElementById("businessName").textContent=DATA.business.name;
+document.getElementById("businessTagline").textContent=DATA.business.tagline;
+document.getElementById("priceLabel").textContent=DATA.business.currency;
+document.getElementById("services").innerHTML=DATA.services.map(s=>`<button type="button" class="service" onclick="chooseService(${s.id})"><div><strong>${s.name}</strong><small>${s.duration}</small></div><div style="display:flex;align-items:center"><div class="price">${s.price}<small>تومان</small></div><div class="arrow">←</div></div></button>`).join("");
+}
+function chooseService(id){
+selected.service=DATA.services.find(x=>x.id===id);
+selectedServiceTitle.textContent=selected.service.name;
+renderDays();show("booking");
+}
+function renderDays(){
+document.getElementById("dates").innerHTML=DATA.days.map((x,i)=>`<button class="slot" onclick="chooseDay(${i})"><strong>${x.name}</strong><small>${x.times.length} زمان آزاد</small></button>`).join("");
+document.getElementById("times").innerHTML="";document.getElementById("details").classList.add("hidden");document.getElementById("sticky").classList.add("hidden");clearError();
+}
+function chooseDay(i){
+selected.day=DATA.days[i].name;selected.time=null;
+document.querySelectorAll("#dates .slot").forEach((b,j)=>b.classList.toggle("selected",j===i));
+document.getElementById("times").innerHTML=DATA.days[i].times.map(t=>`<button class="slot" onclick="chooseTime(this,'${t}')"><strong>${t}</strong><small>آزاد</small></button>`).join("");
+}
+function chooseTime(btn,t){
+selected.time=t;
+document.querySelectorAll("#times .slot").forEach(b=>b.classList.remove("selected"));
+btn.classList.add("selected");details.classList.remove("hidden");sticky.classList.remove("hidden");
+document.getElementById("p2").classList.add("on");document.getElementById("p3").classList.add("on");
+}
+function validName(v){return v.trim().length>=2}
+function validPhone(v){return /^09\d{9}$/.test(v.replace(/[\s-]/g,""))}
+function showError(msg,field){
+document.getElementById("formError").textContent=msg;document.getElementById("formError").classList.remove("hidden");
+document.getElementById("name").classList.toggle("invalid",field==="name");document.getElementById("phone").classList.toggle("invalid",field==="phone");
+}
+function clearError(){document.getElementById("formError").classList.add("hidden");document.getElementById("name").classList.remove("invalid");document.getElementById("phone").classList.remove("invalid")}
+function submitBooking(){
+clearError();const n=document.getElementById("name").value.trim(),p=document.getElementById("phone").value.replace(/[\s-]/g,"");
+if(!validName(n)){showError("لطفاً نام و نام خانوادگی را وارد کنید.","name");return}
+if(!validPhone(p)){showError("شماره موبایل را به شکل 09xxxxxxxxx وارد کنید.","phone");return}
+const key=selected.day+"|"+selected.time;
+const a=JSON.parse(localStorage.getItem("bookings")||"[]");
+if(a.some(b=>b.slot===key&&b.status!=="rejected")){showError("این زمان در حال حاضر دیگر قابل درخواست نیست. لطفاً زمان دیگری انتخاب کنید.");return}
+a.push({id:Date.now(),name:n,phone:p,service:selected.service.name,day:selected.day,time:selected.time,slot:key,status:"pending",createdAt:new Date().toISOString()});
+localStorage.setItem("bookings",JSON.stringify(a));show("done");
+}
+function whatsapp(){window.open("https://wa.me/"+DATA.business.whatsapp+"?text="+encodeURIComponent("سلام، درباره خدمات و رزرو وقت سوال دارم."),"_blank")}
+function show(id){["home","booking","done"].forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));if(id!=="booking")document.getElementById("sticky").classList.add("hidden")}
+window.addEventListener("error",function(e){console.error("MVP error:",e.error||e.message)});
+init();
+</script>
+</body></html>
