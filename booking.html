@@ -247,6 +247,20 @@
       .slot.selected small {
         color: #e8f2ff;
       }
+      .slot.disabled {
+        background: #f1f4f8;
+        border-color: #e2e7ee;
+        color: #98a2b3;
+        cursor: not-allowed;
+        box-shadow: none;
+        opacity: 0.78;
+      }
+      .slot.disabled strong {
+        text-decoration: line-through;
+      }
+      .slot.disabled small {
+        color: #98a2b3;
+      }
       label {
         font-size: 11px;
         color: var(--muted);
@@ -479,6 +493,7 @@
       };
 
       let selected = { service: null, day: null, time: null };
+      let unavailableTimes = new Set();
 
       function init() {
         document.getElementById("businessName").textContent =
@@ -526,27 +541,81 @@
         document.getElementById("p3").classList.remove("on");
       }
 
-      function chooseDay(i) {
+      async function chooseDay(i) {
         selected.day = DATA.days[i].name;
         selected.time = null;
+        unavailableTimes = new Set();
         document
           .querySelectorAll("#dates .slot")
           .forEach((b, j) => b.classList.toggle("selected", j === i));
-        document.getElementById("times").innerHTML = DATA.days[i].times
-          .map(
-            (t) => `
-    <button type="button" class="slot" onclick="chooseTime(this,'${t}')">
-      <strong>${t}</strong><small>آزاد</small>
-    </button>`,
-          )
-          .join("");
         document.getElementById("details").classList.add("hidden");
         document.getElementById("sticky").classList.add("hidden");
         document.getElementById("p2").classList.add("on");
         document.getElementById("p3").classList.remove("on");
+        clearError();
+
+        const timesEl = document.getElementById("times");
+        timesEl.innerHTML =
+          '<div class="note" style="grid-column:1/-1;text-align:center;padding:12px">در حال بررسی زمان‌های خالی…</div>';
+
+        const result = await getUnavailableTimes(selected.day);
+        if (!result.ok) {
+          timesEl.innerHTML =
+            '<div class="error" style="grid-column:1/-1">در حال حاضر امکان بررسی زمان‌های خالی وجود ندارد. لطفاً دوباره تلاش کنید.</div>';
+          return;
+        }
+
+        unavailableTimes = new Set(result.times);
+        renderTimes(DATA.days[i].times);
+      }
+
+      function renderTimes(times) {
+        const timesEl = document.getElementById("times");
+        timesEl.innerHTML = times
+          .map((t) => {
+            const busy = unavailableTimes.has(t);
+            return `<button type="button" class="slot ${busy ? "disabled" : ""}" ${busy ? 'disabled aria-disabled="true"' : ""} onclick="${busy ? "return false;" : `chooseTime(this,'${t}')`}">
+      <strong>${t}</strong><small>${busy ? "پر شده" : "آزاد"}</small>
+    </button>`;
+          })
+          .join("");
+      }
+
+      async function getUnavailableTimes(dayName) {
+        try {
+          const response = await fetch(
+            `${CONFIG.SUPABASE_URL}/rest/v1/rpc/get_booked_times`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                apikey: CONFIG.SUPABASE_PUBLISHABLE_KEY,
+                Authorization: `Bearer ${CONFIG.SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({
+                p_salon_id: DATA.business.id,
+                p_day_name: dayName,
+              }),
+            },
+          );
+          if (!response.ok) {
+            let body = "";
+            try {
+              body = await response.text();
+            } catch (_) {}
+            console.error("Availability error", response.status, body);
+            return { ok: false, times: [] };
+          }
+          const rows = await response.json();
+          return { ok: true, times: (rows || []).map((x) => x.time_slot) };
+        } catch (error) {
+          console.error("Availability error", error);
+          return { ok: false, times: [] };
+        }
       }
 
       function chooseTime(btn, t) {
+        if (unavailableTimes.has(t)) return;
         selected.time = t;
         document
           .querySelectorAll("#times .slot")
