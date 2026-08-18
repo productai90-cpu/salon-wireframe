@@ -374,7 +374,14 @@
         // سالن متعلق به User فعلی
         currentSalonId = owner.salon_id;
 
-        $("salonName").textContent = currentSalonId;
+        // سالن متعلق به User فعلی
+        currentSalonId = owner.salon_id;
+
+        const salonNameEl = $("salonName");
+
+        if (salonNameEl) {
+          salonNameEl.textContent = currentSalonId;
+        }
 
         await loadBookings();
       }
