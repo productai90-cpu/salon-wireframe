@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>مدیریت رزرو — سالن مهرداد</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      :root {
+        --blue: #1769d2;
+        --blue2: #e8f2ff;
+        --ink: #111827;
+        --muted: #667085;
+        --line: #dbe5f0;
+        --bg: #f6f9fd;
+        --white: #fff;
+        --red: #b42318;
+        --redbg: #fff1f1;
+        --green: #1769d2;
+        --shadow: 0 12px 35px rgba(17, 24, 39, 0.07);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Tahoma, Arial, sans-serif;
+      }
+      .app {
+        max-width: 760px;
+        margin: auto;
+        padding: 20px 16px 50px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+      }
+      .brand {
+        font-size: 22px;
+        font-weight: 900;
+      }
+      .brand small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 500;
+        margin-top: 6px;
+      }
+      .badge {
+        background: var(--blue2);
+        color: var(--blue);
+        border-radius: 99px;
+        padding: 8px 12px;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        margin-bottom: 16px;
+      }
+      h1,
+      h2 {
+        margin: 0;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      h2 {
+        font-size: 16px;
+        margin-bottom: 16px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 13px 0 7px;
+      }
+      input {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        outline: 0;
+        background: #fff;
+      }
+      input:focus {
+        border-color: #4d91e8;
+        box-shadow: 0 0 0 4px rgba(23, 105, 210, 0.1);
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+      .btn {
+        border: 0;
+        border-radius: 14px;
+        padding: 12px 16px;
+        font-weight: 800;
+      }
+      .primary {
+        background: var(--blue);
+        color: #fff;
+      }
+      .light {
+        background: var(--blue2);
+        color: var(--blue);
+      }
+      .danger {
+        background: var(--redbg);
+        color: var(--red);
+      }
+      .full {
+        width: 100%;
+        margin-top: 15px;
+      }
+      .error {
+        margin-top: 12px;
+        background: var(--redbg);
+        color: var(--red);
+        padding: 11px 12px;
+        border-radius: 13px;
+        font-size: 12px;
+        line-height: 1.7;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .filters {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+      .filter {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--muted);
+        border-radius: 99px;
+        padding: 8px 12px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .filter.active {
+        background: var(--blue2);
+        color: var(--blue);
+        border-color: #bcd5f5;
+      }
+      .booking {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 16px;
+        margin-top: 11px;
+        background: #fff;
+      }
+      .booking.new {
+        border-color: #bcd5f5;
+        box-shadow: 0 8px 24px rgba(23, 105, 210, 0.08);
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .customer {
+        font-size: 15px;
+        font-weight: 900;
+      }
+      .status {
+        font-size: 10px;
+        font-weight: 900;
+        padding: 6px 9px;
+        border-radius: 99px;
+        background: var(--blue2);
+        color: var(--blue);
+        height: max-content;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 2;
+        margin-top: 8px;
+      }
+      .phone {
+        direction: ltr;
+        display: inline-block;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 13px;
+      }
+      .actions button {
+        flex: 1;
+      }
+      .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 35px 10px;
+        font-size: 13px;
+      }
+      .login-note {
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.8;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="top">
+        <div class="brand">
+          سالن یاسین<small>مدیریت درخواست‌های رزرو</small>
+        </div>
+        <div class="badge" id="connection">در حال اتصال...</div>
+      </div>
+
+      <section class="card" id="loginCard">
+        <h1>ورود صاحب سالن</h1>
+        <label for="email">ایمیل</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="username"
+          placeholder="ایمیل"
+        />
+        <label for="password">رمز عبور</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="رمز عبور"
+        />
+        <button class="btn primary full" id="loginBtn">ورود</button>
+        <div class="error hidden" id="loginError"></div>
+        <div class="login-note">
+          حساب صاحب سالن باید از قبل در بخش Authentication پروژه Supabase ساخته
+          شده باشد.
+        </div>
+      </section>
+
+      <section id="dashboard" class="hidden">
+        <div class="toolbar">
+          <div>
+            <h1>درخواست‌های رزرو</h1>
+            <div class="login-note" id="userLabel"></div>
+          </div>
+          <button class="btn light" id="logoutBtn">خروج</button>
+        </div>
+
+        <div class="filters">
+          <button class="filter active" data-filter="all">همه</button>
+          <button class="filter" data-filter="pending">در انتظار</button>
+          <button class="filter" data-filter="confirmed">تأیید شده</button>
+          <button class="filter" data-filter="rejected">رد شده</button>
+        </div>
+
+        <div id="list"></div>
+      </section>
+    </div>
+
+    <script>
+      const SUPABASE_URL = "https://mxyiqvjaupdstkfchugr.supabase.co";
+      const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_T0Ao34PgSvlsUFUgmW92Kg_5AoGK49x";
+      const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+      );
+
+      let bookings = [];
+      let currentFilter = "all";
+
+      const $ = (id) => document.getElementById(id);
+
+      function statusText(s) {
+        return s === "pending"
+          ? "در انتظار"
+          : s === "confirmed"
+            ? "تأیید شده"
+            : "رد شده";
+      }
+      function esc(v) {
+        return String(v ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            })[m],
+        );
+      }
+      function setConnection(text, good = false) {
+        $("connection").textContent = text;
+        $("connection").style.background = good ? "#e8f2ff" : "#fff1f1";
+        $("connection").style.color = good ? "#1769d2" : "#b42318";
+      }
+
+      async function init() {
+        if (SUPABASE_PUBLISHABLE_KEY.includes("PASTE_")) {
+          setConnection("کلید تنظیم نشده");
+          return;
+        }
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
+        setConnection("متصل", true);
+        if (session) showDashboard(session);
+      }
+      async function login() {
+        $("loginError").classList.add("hidden");
+        const email = $("email").value.trim(),
+          password = $("password").value;
+        if (!email || !password) {
+          $("loginError").textContent = "ایمیل و رمز عبور را وارد کنید.";
+          $("loginError").classList.remove("hidden");
+          return;
+        }
+        $("loginBtn").disabled = true;
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email,
+          password,
+        });
+        $("loginBtn").disabled = false;
+        if (error) {
+          $("loginError").textContent =
+            "ورود انجام نشد. ایمیل و رمز عبور را بررسی کنید.";
+          $("loginError").classList.remove("hidden");
+          return;
+        }
+        showDashboard(data.session);
+      }
+      function showDashboard(session) {
+        $("loginCard").classList.add("hidden");
+        $("dashboard").classList.remove("hidden");
+        $("userLabel").textContent = session.user.email;
+        loadBookings();
+      }
+      async function loadBookings() {
+        $("list").innerHTML =
+          '<div class="card empty">در حال دریافت درخواست‌ها...</div>';
+        const { data, error } = await supabaseClient
+          .from("bookings")
+          .select("*")
+          .eq("salon_id", "salon-mehrdad")
+          .order("created_at", { ascending: false });
+        if (error) {
+          $("list").innerHTML =
+            '<div class="error">دریافت رزروها انجام نشد. Policyهای RLS را بررسی کنید.</div>';
+          return;
+        }
+        bookings = data || [];
+        render();
+      }
+      function render() {
+        const filtered =
+          currentFilter === "all"
+            ? bookings
+            : bookings.filter((b) => b.status === currentFilter);
+        if (!filtered.length) {
+          $("list").innerHTML =
+            '<div class="card empty">درخواستی در این بخش وجود ندارد.</div>';
+          return;
+        }
+        $("list").innerHTML = filtered
+          .map((b) => {
+            const created = new Date(b.created_at).toLocaleString("fa-IR", {
+              dateStyle: "short",
+              timeStyle: "short",
+            });
+            return `<article class="booking ${b.status === "pending" ? "new" : ""}">
+      <div class="row">
+        <div class="customer">${esc(b.customer_name)}</div>
+        <div class="status">${statusText(b.status)}</div>
+      </div>
+      <div class="meta">
+        ${esc(b.service_name)}<br>
+        ${esc(b.day_name)} · ${esc(b.time_slot)}<br>
+        <span class="phone">${esc(b.customer_phone)}</span><br>
+        ثبت شده: ${created}
+      </div>
+      ${
+        b.status === "pending"
+          ? `<div class="actions">
+        <button class="btn primary" onclick="changeStatus(${b.id},'confirmed')">تأیید رزرو</button>
+        <button class="btn danger" onclick="changeStatus(${b.id},'rejected')">رد درخواست</button>
+      </div>`
+          : ""
+      }
+    </article>`;
+          })
+          .join("");
+      }
+      async function changeStatus(id, status) {
+        const b = bookings.find((x) => x.id === id);
+        if (!b) return;
+        if (status === "confirmed") {
+          const { data: conflict } = await supabaseClient
+            .from("bookings")
+            .select("id")
+            .eq("salon_id", "salon-yasin")
+            .eq("day_name", b.day_name)
+            .eq("time_slot", b.time_slot)
+            .eq("status", "confirmed")
+            .neq("id", id)
+            .limit(1);
+          if (conflict && conflict.length) {
+            alert("این زمان قبلاً تأیید شده است.");
+            await loadBookings();
+            return;
+          }
+        }
+        const { error } = await supabaseClient
+          .from("bookings")
+          .update({ status })
+          .eq("id", id);
+        if (error) {
+          alert("تغییر وضعیت انجام نشد.");
+          return;
+        }
+        await loadBookings();
+      }
+      $("loginBtn").addEventListener("click", login);
+      $("password").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") login();
+      });
+      $("logoutBtn").addEventListener("click", async () => {
+        await supabaseClient.auth.signOut();
+        location.reload();
+      });
+      document.querySelectorAll(".filter").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".filter")
+            .forEach((x) => x.classList.remove("active"));
+          btn.classList.add("active");
+          currentFilter = btn.dataset.filter;
+          render();
+        }),
+      );
+      init();
+    </script>
+  </body>
+</html>
