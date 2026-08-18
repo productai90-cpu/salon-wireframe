@@ -415,7 +415,7 @@
           const { data: conflict } = await supabaseClient
             .from("bookings")
             .select("id")
-            .eq("salon_id", "salon-yasin")
+            .eq("salon_id", "salon-mehrdad")
             .eq("day_name", b.day_name)
             .eq("time_slot", b.time_slot)
             .eq("status", "confirmed")
