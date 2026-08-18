@@ -284,6 +284,7 @@
 
       let bookings = [];
       let currentFilter = "all";
+      let currentSalonId = null;
 
       const $ = (id) => document.getElementById(id);
 
@@ -347,11 +348,37 @@
         }
         showDashboard(data.session);
       }
-      function showDashboard(session) {
+      async function showDashboard(session) {
         $("loginCard").classList.add("hidden");
         $("dashboard").classList.remove("hidden");
+
         $("userLabel").textContent = session.user.email;
-        loadBookings();
+
+        // پیدا کردن سالن مربوط به User واردشده
+        const { data: owner, error } = await supabaseClient
+          .from("salon_owners")
+          .select("salon_id")
+          .eq("user_id", session.user.id)
+          .single();
+
+        if (error || !owner) {
+          $("dashboard").innerHTML = `
+        <div class="card">
+          <h1>دسترسی ندارید</h1>
+          <p class="login-note">
+            این حساب به هیچ سالنی متصل نشده است.
+          </p>
+        </div>
+      `;
+          return;
+        }
+
+        // سالن متعلق به User فعلی
+        currentSalonId = owner.salon_id;
+
+        $("salonName").textContent = currentSalonId;
+
+        await loadBookings();
       }
       async function loadBookings() {
         $("list").innerHTML =
@@ -359,7 +386,7 @@
         const { data, error } = await supabaseClient
           .from("bookings")
           .select("*")
-          .eq("salon_id", "salon-yasin")
+          .eq("salon_id", currentSalonId)
           .order("created_at", { ascending: false });
         if (error) {
           $("list").innerHTML =
@@ -386,25 +413,25 @@
               timeStyle: "short",
             });
             return `<article class="booking ${b.status === "pending" ? "new" : ""}">
-      <div class="row">
-        <div class="customer">${esc(b.customer_name)}</div>
-        <div class="status">${statusText(b.status)}</div>
-      </div>
-      <div class="meta">
-        ${esc(b.service_name)}<br>
-        ${esc(b.day_name)} · ${esc(b.time_slot)}<br>
-        <span class="phone">${esc(b.customer_phone)}</span><br>
-        ثبت شده: ${created}
-      </div>
-      ${
-        b.status === "pending"
-          ? `<div class="actions">
-        <button class="btn primary" onclick="changeStatus(${b.id},'confirmed')">تأیید رزرو</button>
-        <button class="btn danger" onclick="changeStatus(${b.id},'rejected')">رد درخواست</button>
-      </div>`
-          : ""
-      }
-    </article>`;
+        <div class="row">
+          <div class="customer">${esc(b.customer_name)}</div>
+          <div class="status">${statusText(b.status)}</div>
+        </div>
+        <div class="meta">
+          ${esc(b.service_name)}<br>
+          ${esc(b.day_name)} · ${esc(b.time_slot)}<br>
+          <span class="phone">${esc(b.customer_phone)}</span><br>
+          ثبت شده: ${created}
+        </div>
+        ${
+          b.status === "pending"
+            ? `<div class="actions">
+          <button class="btn primary" onclick="changeStatus(${b.id},'confirmed')">تأیید رزرو</button>
+          <button class="btn danger" onclick="changeStatus(${b.id},'rejected')">رد درخواست</button>
+        </div>`
+            : ""
+        }
+      </article>`;
           })
           .join("");
       }
@@ -415,7 +442,7 @@
           const { data: conflict } = await supabaseClient
             .from("bookings")
             .select("id")
-            .eq("salon_id", "salon-yasin")
+            .eq("salon_id", currentSalonId)
             .eq("day_name", b.day_name)
             .eq("time_slot", b.time_slot)
             .eq("status", "confirmed")
