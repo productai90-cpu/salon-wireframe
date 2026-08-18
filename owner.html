@@ -381,16 +381,24 @@
       async function loadBookings() {
         $("list").innerHTML =
           '<div class="card empty">در حال دریافت درخواست‌ها...</div>';
+
+        console.log("CURRENT SALON:", currentSalonId);
+
         const { data, error } = await supabaseClient
           .from("bookings")
           .select("*")
           .eq("salon_id", currentSalonId)
           .order("created_at", { ascending: false });
+
+        console.log("BOOKINGS DATA:", data);
+        console.log("BOOKINGS ERROR:", error);
+
         if (error) {
           $("list").innerHTML =
             '<div class="error">دریافت رزروها انجام نشد. Policyهای RLS را بررسی کنید.</div>';
           return;
         }
+
         bookings = data || [];
         render();
       }
